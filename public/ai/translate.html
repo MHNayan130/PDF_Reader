@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Translate – AnyStudy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <a href="/pages/home.html">AnyStudy</a>
+      </div>
+      <div class="profile-section">
+        <button type="button" class="profile-btn" id="profileBtn" aria-label="Open profile menu">
+          <img id="profileImage" src="" alt="Profile avatar" />
+        </button>
+        <div class="popup-menu" id="popupMenu">
+          <a href="/pages/profile.html" class="popup-item">Profile</a>
+          <a href="#" class="popup-item" data-action="notification">Notification</a>
+          <a href="/pages/last-study.html" class="popup-item">History</a>
+          <a href="#" class="popup-item" data-action="logout">Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="tool-header">
+        <h1>🌐 AI Translation</h1>
+        <p>Translate text between languages using advanced AI models</p>
+      </div>
+
+      <div class="translate-container">
+        <div class="translate-panel">
+          <h3>Source Text</h3>
+          <div class="language-selector">
+            <select id="fromLang" class="lang-select">
+              <option value="English">English</option>
+              <option value="Spanish">Spanish</option>
+              <option value="French">French</option>
+              <option value="German">German</option>
+              <option value="Italian">Italian</option>
+              <option value="Portuguese">Portuguese</option>
+              <option value="Chinese">Chinese</option>
+              <option value="Japanese">Japanese</option>
+              <option value="Korean">Korean</option>
+              <option value="Russian">Russian</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Hindi">Hindi</option>
+            </select>
+          </div>
+          <textarea
+            id="sourceText"
+            placeholder="Enter text to translate..."
+            maxlength="5000"
+            rows="8"
+          ></textarea>
+          <div class="char-count">
+            <span id="charCount">0</span>/5000 characters
+          </div>
+        </div>
+
+        <div class="translate-controls">
+          <button id="swapBtn" class="swap-button" title="Swap languages">
+            ⇄
+          </button>
+          <button id="translateBtn" class="button primary">
+            Translate
+          </button>
+        </div>
+
+        <div class="translate-panel">
+          <h3>Translation</h3>
+          <div class="language-selector">
+            <select id="toLang" class="lang-select">
+              <option value="Spanish">Spanish</option>
+              <option value="English">English</option>
+              <option value="French">French</option>
+              <option value="German">German</option>
+              <option value="Italian">Italian</option>
+              <option value="Portuguese">Portuguese</option>
+              <option value="Chinese">Chinese</option>
+              <option value="Japanese">Japanese</option>
+              <option value="Korean">Korean</option>
+              <option value="Russian">Russian</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Hindi">Hindi</option>
+            </select>
+          </div>
+          <div id="translationResult" class="translation-result">
+            <p class="placeholder">Translation will appear here...</p>
+          </div>
+          <div class="result-actions">
+            <button id="copyBtn" class="button outline small">Copy</button>
+            <button id="clearBtn" class="button outline small">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="translate-info">
+        <h4>Supported Languages</h4>
+        <p>Our AI translation supports major world languages including English, Spanish, French, German, Italian, Portuguese, Chinese, Japanese, Korean, Russian, Arabic, and Hindi. More languages coming soon!</p>
+        <h4>How it works</h4>
+        <ul>
+          <li>Select source and target languages</li>
+          <li>Enter or paste your text (up to 5000 characters)</li>
+          <li>Click "Translate" to get AI-powered translation</li>
+          <li>Copy the result or start a new translation</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+
+  <div class="background-waves">
+    <div class="wave wave-1"></div>
+    <div class="wave wave-2"></div>
+    <div class="wave wave-3"></div>
+    <div class="particle particle-1"></div>
+    <div class="particle particle-2"></div>
+    <div class="particle particle-3"></div>
+    <div class="particle particle-4"></div>
+    <div class="particle particle-5"></div>
+    <div class="particle particle-6"></div>
+    <div class="particle particle-7"></div>
+    <div class="particle particle-8"></div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/ai/translate.js"></script>
+</body>
+</html>

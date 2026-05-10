@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home – AnyStudy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="page-shell home-with-sidebar">
+    <header class="topbar">
+      <div class="brand"></div>
+      <div class="header-spacer"></div>
+      <button type="button" class="chat-btn" id="chatSidebarToggle" aria-label="Toggle chat sidebar" title="Chat Assistant">
+        💬
+      </button>
+      <div class="profile-section">
+        <button type="button" class="profile-btn" id="profileBtn" aria-label="Open profile menu">
+          <img id="profileImage" src="" alt="Profile avatar" />
+        </button>
+        <div class="popup-menu" id="popupMenu">
+          <a href="/pages/profile.html" class="popup-item">Profile</a>
+          <a href="#" class="popup-item" data-action="notification">Notification</a>
+          <a href="/pages/last-study.html" class="popup-item">History</a>
+          <a href="#" class="popup-item" data-action="logout">Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="home-container">
+      <main class="main-content">
+        <div class="welcome-section">
+          <h1>Home</h1>
+          <p>Your study materials are ready. Upload and access files securely.</p>
+          <div class="main-actions">
+            <button class="button primary" id="uploadBtn">Upload File</button>
+            <button class="button outline" id="continueBtn">Continue Studying</button>
+            <div class="action-menu">
+              <button class="button outline linebox" id="fileMenuBtn" aria-haspopup="true" aria-expanded="false" type="button">New file</button>
+              <div class="action-menu-popup" id="fileMenuPopup" role="menu" aria-hidden="true">
+                <button class="action-menu-item" type="button" id="uploadNewFileBtn">Upload new file</button>
+                <button class="action-menu-item" type="button" id="createNewFileBtn">Create new file</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="features-grid" style="margin-top: 60px;">
+            <h2 style="width: 100%; text-align: center; margin-bottom: 32px; font-size: 1.8rem;">AI Study Tools</h2>
+            <a href="/ai/chat.html" class="feature-card">
+              <h3>💬 Chat Assistant</h3>
+              <p>Ask questions and get instant AI responses</p>
+            </a>
+            <a href="/ai/read.html" class="feature-card">
+              <h3>📖 Read & Analyze</h3>
+              <p>Upload documents and ask questions about their content</p>
+            </a>
+            <a href="/ai/summary.html" class="feature-card">
+              <h3>📝 Create Summary</h3>
+              <p>Generate concise summaries of long texts</p>
+            </a>
+            <a href="/ai/pdf-doc.html" class="feature-card">
+              <h3>📄 Generate PDF/Doc</h3>
+              <p>Create PDF or Word documents from your content</p>
+            </a>
+            <a href="/ai/speech.html" class="feature-card">
+              <h3>🎤 Speech to Text</h3>
+              <p>Convert audio files to text using AI transcription</p>
+            </a>
+            <a href="/ai/tts.html" class="feature-card">
+              <h3>🔊 Text to Speech</h3>
+              <p>Convert text to natural-sounding speech</p>
+            </a>
+            <a href="/ai/translate.html" class="feature-card">
+              <h3>🌐 AI Translation</h3>
+              <p>Translate text between multiple languages</p>
+            </a>
+          </div>
+        </div>
+
+        <div class="upload-section" id="uploadSection">
+          <div class="upload-card">
+            <label class="dropzone" for="fileInput">
+              <span>Drag your file here or click to browse</span>
+              <small>Supports PDF, DOC, DOCX, PPT, PPTX, TXT</small>
+            </label>
+            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" hidden />
+            <div class="file-preview" id="filePreview">
+              <p class="placeholder">No file selected yet.</p>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <div class="sidebar-divider" id="sidebarDivider"></div>
+
+      <aside class="chat-sidebar" id="chatSidebar">
+        <div class="chat-sidebar-header">
+          <h3>Chat Assistant</h3>
+          <button class="close-btn" id="closeChatSidebar" aria-label="Close chat sidebar">✕</button>
+        </div>
+        <div class="chat-sidebar-content" id="chatContent">
+          <div class="chat-placeholder">
+            <p>Chat will appear here...</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="background-waves">
+    <div class="wave wave-1"></div>
+    <div class="wave wave-2"></div>
+    <div class="wave wave-3"></div>
+    <div class="particle particle-1"></div>
+    <div class="particle particle-2"></div>
+    <div class="particle particle-3"></div>
+    <div class="particle particle-4"></div>
+    <div class="particle particle-5"></div>
+    <div class="particle particle-6"></div>
+    <div class="particle particle-7"></div>
+    <div class="particle particle-8"></div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

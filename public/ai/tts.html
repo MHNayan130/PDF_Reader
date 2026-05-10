@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text to Speech – AnyStudy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand"><a href="/pages/home.html">AnyStudy</a></div>
+      <div class="profile-section">
+        <button type="button" class="profile-btn" id="profileBtn" aria-label="Open profile menu">
+          <img id="profileImage" src="" alt="Profile avatar" />
+        </button>
+        <div class="popup-menu" id="popupMenu">
+          <a href="/pages/profile.html" class="popup-item">Profile</a>
+          <a href="#" class="popup-item" data-action="notification">Notification</a>
+          <a href="/pages/last-study.html" class="popup-item">History</a>
+          <a href="#" class="popup-item" data-action="logout">Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="feature-section">
+        <h1>Text to Speech</h1>
+        <p>Convert text to natural-sounding speech using AI voice synthesis.</p>
+
+        <div class="tts-container">
+          <div class="tts-panel">
+            <h3>Enter Text</h3>
+            <textarea id="ttsInput" class="feature-textarea" placeholder="Enter the text you want to convert to speech..."></textarea>
+
+            <div class="tts-controls">
+              <div class="control-group">
+                <label for="voiceSelect">Voice:</label>
+                <select id="voiceSelect" class="feature-select">
+                  <option value="alloy">Alloy (Neutral)</option>
+                  <option value="echo">Echo (Male)</option>
+                  <option value="fable">Fable (British)</option>
+                  <option value="onyx">Onyx (Deep Male)</option>
+                  <option value="nova">Nova (Young Female)</option>
+                  <option value="shimmer">Shimmer (Warm Female)</option>
+                </select>
+              </div>
+
+              <div class="control-group">
+                <label for="speedSelect">Speed:</label>
+                <select id="speedSelect" class="feature-select">
+                  <option value="0.5">0.5x (Slow)</option>
+                  <option value="0.75">0.75x</option>
+                  <option value="1.0" selected>1.0x (Normal)</option>
+                  <option value="1.25">1.25x</option>
+                  <option value="1.5">1.5x (Fast)</option>
+                  <option value="2.0">2.0x (Very Fast)</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="button primary" id="speakBtn" style="margin-top: 16px; width: 100%;">
+              🔊 Speak Text
+            </button>
+          </div>
+
+          <div class="tts-panel">
+            <h3>Audio Player</h3>
+            <div class="audio-player" id="audioPlayer" style="display: none;">
+              <audio id="ttsAudio" controls style="width: 100%; margin-bottom: 12px;"></audio>
+              <button class="button outline" id="downloadBtn">📥 Download Audio</button>
+            </div>
+
+            <div class="tts-status" id="ttsStatus">
+              <p class="placeholder">Enter text above and click "Speak Text" to generate audio...</p>
+            </div>
+
+            <div class="tts-info">
+              <h4>Supported Features:</h4>
+              <ul>
+                <li>Multiple AI voices</li>
+                <li>Adjustable speech speed</li>
+                <li>Download audio files</li>
+                <li>Real-time playback</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="background-waves">
+    <div class="wave wave-1"></div>
+    <div class="wave wave-2"></div>
+    <div class="wave wave-3"></div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/ai/tts.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Summarize – AnyStudy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand"><a href="/pages/home.html">AnyStudy</a></div>
+      <div class="profile-section">
+        <button type="button" class="profile-btn" id="profileBtn" aria-label="Open profile menu">
+          <img id="profileImage" src="" alt="Profile avatar" />
+        </button>
+        <div class="popup-menu" id="popupMenu">
+          <a href="/pages/profile.html" class="popup-item">Profile</a>
+          <a href="#" class="popup-item" data-action="notification">Notification</a>
+          <a href="/pages/last-study.html" class="popup-item">History</a>
+          <a href="#" class="popup-item" data-action="logout">Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="feature-section">
+        <h1>Create Summary</h1>
+        <p>Automatically generate concise summaries of long texts.</p>
+
+        <div class="summary-container">
+          <div class="summary-panel">
+            <h3>Original Text</h3>
+            <textarea id="summaryInput" class="feature-textarea" placeholder="Paste your text here..."></textarea>
+            <button class="button primary" id="summarizeBtn" style="margin-top: 12px;">Summarize</button>
+          </div>
+
+          <div class="summary-panel">
+            <h3>Summary</h3>
+            <div class="summary-result" id="summaryOutput">
+              <p class="placeholder">Your summary will appear here...</p>
+            </div>
+            <button class="button outline" id="copySummaryBtn" style="margin-top: 12px; display: none;">Copy Summary</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="background-waves">
+    <div class="wave wave-1"></div>
+    <div class="wave wave-2"></div>
+    <div class="wave wave-3"></div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/ai/summary.js"></script>
+</body>
+</html>

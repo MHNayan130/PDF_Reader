@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speech to Text – AnyStudy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand"><a href="/pages/home.html">AnyStudy</a></div>
+      <div class="profile-section">
+        <button type="button" class="profile-btn" id="profileBtn" aria-label="Open profile menu">
+          <img id="profileImage" src="" alt="Profile avatar" />
+        </button>
+        <div class="popup-menu" id="popupMenu">
+          <a href="/pages/profile.html" class="popup-item">Profile</a>
+          <a href="#" class="popup-item" data-action="notification">Notification</a>
+          <a href="/pages/last-study.html" class="popup-item">History</a>
+          <a href="#" class="popup-item" data-action="logout">Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="feature-section">
+        <h1>Speech to Text</h1>
+        <p>Convert audio files to text using AI-powered speech recognition.</p>
+
+        <div class="speech-container">
+          <div class="speech-panel">
+            <h3>Upload Audio File</h3>
+            <div class="audio-upload-area">
+              <input type="file" id="audioFileInput" accept="audio/*" hidden />
+              <label for="audioFileInput" class="audio-dropzone">
+                <div class="audio-icon">🎤</div>
+                <p>Click to upload or drag & drop audio file</p>
+                <small>Supports MP3, WAV, FLAC, M4A</small>
+              </label>
+            </div>
+            <div class="audio-info" id="audioInfo" style="display: none;">
+              <p><strong>File:</strong> <span id="audioFileName"></span></p>
+              <p><strong>Size:</strong> <span id="audioFileSize"></span></p>
+            </div>
+            <button class="button outline" id="micBtn" style="margin-top: 16px; width: 100%;">
+              🎙 Start Microphone
+            </button>
+            <p class="placeholder" id="micStatus" style="margin-top: 12px;">Click "Start Microphone" to transcribe your voice live.</p>
+            <p class="help-note" style="margin-top: 10px; color: rgba(233, 240, 255, 0.72); font-size: 0.95rem;">Allow microphone access in your browser when prompted, then speak clearly for live text transcription.</p>
+            <button class="button primary" id="transcribeBtn" style="margin-top: 16px; width: 100%;" disabled>
+              Transcribe Audio
+            </button>
+          </div>
+
+          <div class="speech-panel">
+            <h3>Transcription</h3>
+            <div class="transcription-result" id="transcriptionResult">
+              <p class="placeholder">Your transcription will appear here...</p>
+            </div>
+            <button class="button outline" id="copyTranscriptionBtn" style="margin-top: 12px; display: none;">
+              Copy Text
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="background-waves">
+    <div class="wave wave-1"></div>
+    <div class="wave wave-2"></div>
+    <div class="wave wave-3"></div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/ai/speech.js"></script>
+</body>
+</html>
