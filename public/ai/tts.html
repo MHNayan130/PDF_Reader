@@ -11,8 +11,12 @@
 </head>
 <body>
   <div class="page-shell">
-    <header class="topbar">
-      <div class="brand"><a href="/pages/home.html">AnyStudy</a></div>
+    <header class="topbar persistent-header">
+      <div class="brand"><a href="/pages/home.html">ANYSTUDY</a></div>
+      <div class="header-spacer"></div>
+      <button type="button" class="chat-btn" id="chatSidebarToggle" aria-label="Toggle chat sidebar" title="Chat Assistant">
+        💬
+      </button>
       <div class="profile-section">
         <button type="button" class="profile-btn" id="profileBtn" aria-label="Open profile menu">
           <img id="profileImage" src="" alt="Profile avatar" />
@@ -33,7 +37,19 @@
 
         <div class="tts-container">
           <div class="tts-panel">
-            <h3>Enter Text</h3>
+            <h3>Select Document (Optional)</h3>
+            <div class="file-selection-area">
+              <div class="file-options">
+                <button class="button outline" id="loadExistingTtsFileBtn">📂 Load Document</button>
+                <button class="button outline" id="uploadTtsFileBtn">📤 Upload Document</button>
+              </div>
+              <input type="file" id="ttsDocInput" accept=".pdf,.doc,.docx,.txt" hidden />
+              <div class="selected-file-info" id="selectedTtsFileInfo" style="display: none; margin-top: 12px;">
+                <p><strong>Selected:</strong> <span id="selectedTtsFileName"></span></p>
+              </div>
+            </div>
+
+            <h3 style="margin-top: 24px;">Enter Text</h3>
             <textarea id="ttsInput" class="feature-textarea" placeholder="Enter the text you want to convert to speech..."></textarea>
 
             <div class="tts-controls">

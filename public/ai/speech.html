@@ -11,8 +11,12 @@
 </head>
 <body>
   <div class="page-shell">
-    <header class="topbar">
-      <div class="brand"><a href="/pages/home.html">AnyStudy</a></div>
+    <header class="topbar persistent-header">
+      <div class="brand"><a href="/pages/home.html">ANYSTUDY</a></div>
+      <div class="header-spacer"></div>
+      <button type="button" class="chat-btn" id="chatSidebarToggle" aria-label="Toggle chat sidebar" title="Chat Assistant">
+        💬
+      </button>
       <div class="profile-section">
         <button type="button" class="profile-btn" id="profileBtn" aria-label="Open profile menu">
           <img id="profileImage" src="" alt="Profile avatar" />
@@ -33,7 +37,23 @@
 
         <div class="speech-container">
           <div class="speech-panel">
-            <h3>Upload Audio File</h3>
+            <h3>Reference Document (Optional)</h3>
+            <div class="file-selection-area">
+              <div class="file-options">
+                <button class="button outline" id="loadExistingSpeechFileBtn">📂 Load Document</button>
+                <button class="button outline" id="uploadSpeechFileBtn">📤 Upload Document</button>
+              </div>
+              <input type="file" id="speechDocInput" accept=".pdf,.doc,.docx,.txt" hidden />
+              <div class="selected-file-info" id="selectedSpeechFileInfo" style="display: none; margin-top: 12px;">
+                <p><strong>Selected:</strong> <span id="selectedSpeechFileName"></span></p>
+              </div>
+              <div id="referenceDocPreview" class="reference-preview" style="margin-top: 12px; display: none;">
+                <p><strong>Reference Text:</strong></p>
+                <div id="referenceDocText" style="max-height: 150px; overflow-y: auto; background: rgba(255,255,255,0.04); padding: 12px; border-radius: 8px; font-size: 0.9rem;"></div>
+              </div>
+            </div>
+
+            <h3 style="margin-top: 24px;">Upload Audio File</h3>
             <div class="audio-upload-area">
               <input type="file" id="audioFileInput" accept="audio/*" hidden />
               <label for="audioFileInput" class="audio-dropzone">
@@ -64,6 +84,14 @@
             <button class="button outline" id="copyTranscriptionBtn" style="margin-top: 12px; display: none;">
               Copy Text
             </button>
+
+            <div id="comparisonSection" style="display: none; margin-top: 24px;">
+              <h3>Comparison with Reference</h3>
+              <p style="font-size: 0.9rem; color: rgba(233, 240, 255, 0.72); margin: 0 0 12px 0;">Words in <span style="color: #7c5dff;">blue</span> match the reference document</p>
+              <div class="comparison-result" id="comparisonResult" style="background: rgba(255,255,255,0.04); padding: 16px; border-radius: 8px; max-height: 200px; overflow-y: auto;">
+              </div>
+              <p id="matchPercentage" style="margin-top: 12px; font-weight: 600;"></p>
+            </div>
           </div>
         </div>
       </div>

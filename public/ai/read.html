@@ -11,8 +11,12 @@
 </head>
 <body>
   <div class="page-shell">
-    <header class="topbar">
-      <div class="brand"><a href="/pages/home.html">AnyStudy</a></div>
+    <header class="topbar persistent-header">
+      <div class="brand"><a href="/pages/home.html">ANYSTUDY</a></div>
+      <div class="header-spacer"></div>
+      <button type="button" class="chat-btn" id="chatSidebarToggle" aria-label="Toggle chat sidebar" title="Chat Assistant">
+        💬
+      </button>
       <div class="profile-section">
         <button type="button" class="profile-btn" id="profileBtn" aria-label="Open profile menu">
           <img id="profileImage" src="" alt="Profile avatar" />
@@ -33,8 +37,20 @@
 
         <div class="read-container">
           <div class="read-panel">
-            <h3>Document Text</h3>
-            <textarea id="documentText" class="feature-textarea" placeholder="Paste your document text here..."></textarea>
+            <h3>Select Document</h3>
+            <div class="file-selection-area">
+              <div class="file-options">
+                <button class="button outline" id="loadExistingFileBtn">📂 Load Existing File</button>
+                <button class="button outline" id="uploadNewFileReadBtn">📤 Upload New File</button>
+              </div>
+              <input type="file" id="readFileInput" accept=".pdf,.doc,.docx,.txt" hidden />
+              <div class="selected-file-info" id="selectedFileInfo" style="display: none; margin-top: 12px;">
+                <p><strong>Selected:</strong> <span id="selectedFileName"></span></p>
+              </div>
+            </div>
+
+            <h3 style="margin-top: 24px;">Document Text</h3>
+            <textarea id="documentText" class="feature-textarea" placeholder="Paste your document text here or it will auto-load from uploaded file..."></textarea>
           </div>
 
           <div class="read-panel">
@@ -47,6 +63,10 @@
             <h3>Answer</h3>
             <div class="read-answer" id="readAnswer">
               <p class="placeholder">Your answer will appear here...</p>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 12px;">
+              <button class="button outline" id="copyReadAnswerBtn" style="flex: 1; display: none;">📋 Copy</button>
+              <button class="button primary" id="addToPdfDocBtn" style="flex: 1; display: none;">➕ Add to Generate PDF/Doc</button>
             </div>
           </div>
         </div>

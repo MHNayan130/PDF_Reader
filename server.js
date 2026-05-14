@@ -11,16 +11,31 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Configure multer for file uploads
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!require('fs').existsSync(uploadsDir)) {
+  require('fs').mkdirSync(uploadsDir);
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
 const upload = multer({
-  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB limit
+  storage: storage,
+  limits: { fileSize: 25 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = /audio\/(mpeg|wav|flac|m4a|mp4)/;
-    const allowedExt = /\.(mp3|wav|flac|m4a|mp4)$/i;
+    const allowedTypes = /audio\/(mpeg|wav|flac|m4a|mp4)|application\/(pdf|msword|vnd\.openxmlformats-officedocument\.wordprocessingml\.document|vnd\.ms-powerpoint|vnd\.openxmlformats-officedocument\.presentationml\.presentation)|text\//;
+    const allowedExt = /\.(mp3|wav|flac|m4a|mp4|pdf|doc|docx|ppt|pptx|txt)$/i;
 
     if (allowedTypes.test(file.mimetype) || allowedExt.test(file.originalname)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Only audio files are allowed.'));
+      cb(new Error('Invalid file type. Only audio, PDF, Word, PowerPoint, and text files are allowed.'));
     }
   }
 });
@@ -151,6 +166,58 @@ app.post('/api/translate', async (req, res) => {
     res.json({ translation: completion.choices[0].message.content });
   } catch (error) {
     console.error('Translation error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// File upload endpoint
+app.post('/api/upload', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file provided' });
+    const fileUrl = `/api/file/${req.file.filename}`;
+    res.json({ success: true, filename: req.file.filename, fileUrl });
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// File download endpoint
+app.get('/api/file/:filename', (req, res) => {
+  try {
+    const filename = req.params.filename;
+    const filepath = path.join(__dirname, 'uploads', filename);
+    res.download(filepath);
+  } catch (error) {
+    console.error('Download error:', error);
+    res.status(500).json({ error: 'File not found' });
+  }
+});
+
+// File save endpoint (for editing text files)
+app.post('/api/save-file', async (req, res) => {
+  try {
+    const { filename, content, type } = req.body;
+    if (!filename || !content) return res.status(400).json({ error: 'Filename and content required' });
+
+    const fs = require('fs');
+    const filepath = path.join(__dirname, 'uploads', filename);
+    
+    // Security check: ensure file is in uploads folder
+    if (!filepath.startsWith(path.join(__dirname, 'uploads'))) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Write file based on type
+    if (type === 'txt' || type === 'md' || type === 'json' || type === 'csv' || type === 'log') {
+      fs.writeFileSync(filepath, content, 'utf8');
+    } else {
+      return res.status(400).json({ error: 'File type not editable' });
+    }
+
+    res.json({ success: true, message: 'File saved' });
+  } catch (error) {
+    console.error('Save error:', error);
     res.status(500).json({ error: error.message });
   }
 });

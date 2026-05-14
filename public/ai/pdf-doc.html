@@ -7,12 +7,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tiptap/extension-character-count@2.1.0/dist/styles.min.css" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
   <div class="page-shell">
-    <header class="topbar">
-      <div class="brand"><a href="/pages/home.html">AnyStudy</a></div>
+    <header class="topbar persistent-header">
+      <div class="brand"><a href="/pages/home.html">ANYSTUDY</a></div>
+      <div class="header-spacer"></div>
+      <button type="button" class="chat-btn" id="chatSidebarToggle" aria-label="Toggle chat sidebar" title="Chat Assistant">
+        💬
+      </button>
       <div class="profile-section">
         <button type="button" class="profile-btn" id="profileBtn" aria-label="Open profile menu">
           <img id="profileImage" src="" alt="Profile avatar" />
@@ -37,7 +42,21 @@
             <input type="text" id="docTitle" class="feature-input" placeholder="Enter document title..." />
 
             <h3 style="margin-top: 24px;">Document Content</h3>
-            <textarea id="docContent" class="feature-textarea" placeholder="Enter your document content..."></textarea>
+            <p style="font-size: 0.9rem; color: rgba(233, 240, 255, 0.72); margin: 0 0 12px 0;">Use the rich text editor below to format your content</p>
+            <div id="editor" class="tiptap-editor"></div>
+            <input type="hidden" id="docContent" />
+
+            <h3 style="margin-top: 24px;">Add Media</h3>
+            <div class="media-upload-buttons">
+              <button class="button outline" id="uploadImageBtn">🖼️ Add Image</button>
+              <button class="button outline" id="uploadVoiceBtn">🎵 Add Voice/Audio</button>
+            </div>
+            <input type="file" id="imageInput" accept="image/*" hidden />
+            <input type="file" id="voiceInput" accept="audio/*" hidden />
+            <div class="attached-media" id="attachedMedia" style="margin-top: 12px; display: none;">
+              <p><strong>Attached Media:</strong></p>
+              <div id="mediaList"></div>
+            </div>
 
             <h3 style="margin-top: 24px;">Format</h3>
             <select id="docFormat" class="feature-select">
@@ -45,13 +64,24 @@
               <option value="docx">DOCX (Word)</option>
             </select>
 
-            <button class="button primary" id="generateDocBtn" style="margin-top: 24px; width: 100%;">Generate & Download</button>
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+              <button class="button primary" id="saveDraftBtn" style="flex: 1;">💾 Save as Draft</button>
+              <button class="button primary" id="generateDocBtn" style="flex: 1;">Generate & Download</button>
+            </div>
           </div>
 
           <div class="doc-panel">
-            <h3>Preview</h3>
-            <div class="doc-preview" id="docPreview">
-              <p class="placeholder">Document preview will appear here...</p>
+            <h3>Drafts & Preview</h3>
+            <div class="drafts-section">
+              <div id="draftsList" class="drafts-list">
+                <p class="placeholder">No drafts saved yet. Save content to create drafts.</p>
+              </div>
+            </div>
+            <div style="margin-top: 20px;">
+              <h3>Preview</h3>
+              <div class="doc-preview" id="docPreview">
+                <p class="placeholder">Document preview will appear here...</p>
+              </div>
             </div>
           </div>
         </div>
@@ -65,6 +95,20 @@
     <div class="wave wave-3"></div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/core@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/pm@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-document@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-paragraph@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-text@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-bold@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-italic@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-underline@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-heading@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-bullet-list@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-ordered-list@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-list-item@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-character-count@2.1.0/dist/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/starter-kit@2.1.0/dist/index.umd.js"></script>
   <script src="/js/app.js"></script>
   <script src="/ai/pdf-doc.js"></script>
 </body>

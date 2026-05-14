@@ -7,9 +7,22 @@ async function bindTTSPage() {
   const ttsAudio = document.getElementById('ttsAudio');
   const downloadBtn = document.getElementById('downloadBtn');
   const ttsStatus = document.getElementById('ttsStatus');
+  const loadExistingTtsFileBtn = document.getElementById('loadExistingTtsFileBtn');
+  const uploadTtsFileBtn = document.getElementById('uploadTtsFileBtn');
+  const ttsDocInput = document.getElementById('ttsDocInput');
 
   loadProfileImage();
   bindPopupMenu();
+
+  // Document file loading handlers
+  if (loadExistingTtsFileBtn) {
+    loadExistingTtsFileBtn.addEventListener('click', showLoadFileDialog);
+  }
+
+  if (uploadTtsFileBtn && ttsDocInput) {
+    uploadTtsFileBtn.addEventListener('click', () => ttsDocInput.click());
+    ttsDocInput.addEventListener('change', handleTtsDocUpload);
+  }
 
   let currentAudioBlob = null;
   let isWebSpeechSupported = 'speechSynthesis' in window;
@@ -24,6 +37,35 @@ async function bindTTSPage() {
     nova: ['nova', 'female', 'samantha', 'karen', 'victoria'],
     shimmer: ['shimmer', 'female', 'zira', 'alloy']
   };
+
+  function handleTtsDocUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      ttsInput.value = event.target.result;
+      updateSelectedFileInfo('ttsDocInput', 'selectedTtsFileInfo', 'selectedTtsFileName');
+    };
+    reader.readAsText(file);
+  }
+
+  function showLoadFileDialog() {
+    alert('Load existing file feature - you can implement a file browser here.');
+  }
+
+  function updateSelectedFileInfo(inputId, containerID, spanId) {
+    const input = document.getElementById(inputId);
+    const container = document.getElementById(containerID);
+    const span = document.getElementById(spanId);
+
+    if (input && container && span && input.files.length > 0) {
+      span.textContent = input.files[0].name;
+      container.style.display = 'block';
+    } else if (container) {
+      container.style.display = 'none';
+    }
+  }
 
   function loadVoices() {
     voices = speechSynthesis.getVoices();

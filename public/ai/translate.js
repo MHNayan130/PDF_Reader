@@ -9,8 +9,51 @@ document.addEventListener('DOMContentLoaded', function() {
   const fromLang = document.getElementById('fromLang');
   const toLang = document.getElementById('toLang');
   const charCount = document.getElementById('charCount');
+  const loadExistingTranslateFileBtn = document.getElementById('loadExistingTranslateFileBtn');
+  const uploadTranslateFileBtn = document.getElementById('uploadTranslateFileBtn');
+  const translateDocInput = document.getElementById('translateDocInput');
 
   let isTranslating = false;
+
+  // Document file loading handlers
+  if (loadExistingTranslateFileBtn) {
+    loadExistingTranslateFileBtn.addEventListener('click', showLoadFileDialog);
+  }
+
+  if (uploadTranslateFileBtn && translateDocInput) {
+    uploadTranslateFileBtn.addEventListener('click', () => translateDocInput.click());
+    translateDocInput.addEventListener('change', handleTranslateDocUpload);
+  }
+
+  function handleTranslateDocUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      sourceText.value = event.target.result;
+      updateSelectedFileInfo('translateDocInput', 'selectedTranslateFileInfo', 'selectedTranslateFileName');
+      charCount.textContent = sourceText.value.length;
+    };
+    reader.readAsText(file);
+  }
+
+  function showLoadFileDialog() {
+    alert('Load existing file feature - you can implement a file browser here.');
+  }
+
+  function updateSelectedFileInfo(inputId, containerID, spanId) {
+    const input = document.getElementById(inputId);
+    const container = document.getElementById(containerID);
+    const span = document.getElementById(spanId);
+
+    if (input && container && span && input.files.length > 0) {
+      span.textContent = input.files[0].name;
+      container.style.display = 'block';
+    } else if (container) {
+      container.style.display = 'none';
+    }
+  }
 
   // Character count
   sourceText.addEventListener('input', function() {

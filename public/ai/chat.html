@@ -11,8 +11,12 @@
 </head>
 <body>
   <div class="page-shell">
-    <header class="topbar">
-      <div class="brand"><a href="/pages/home.html">AnyStudy</a></div>
+    <header class="topbar persistent-header">
+      <div class="brand"><a href="/pages/home.html">ANYSTUDY</a></div>
+      <div class="header-spacer"></div>
+      <button type="button" class="chat-btn" id="chatSidebarToggle" aria-label="Toggle chat sidebar" title="Chat Assistant" style="display: none;">
+        💬
+      </button>
       <div class="profile-section">
         <button type="button" class="profile-btn" id="profileBtn" aria-label="Open profile menu">
           <img id="profileImage" src="" alt="Profile avatar" />
@@ -37,6 +41,22 @@
             <option value="deepseek-ai/DeepSeek-V3:novita">DeepSeek V3 (Default)</option>
             <option value="Qwen/Qwen2.5-72B-Instruct">Qwen 2.5 72B</option>
           </select>
+        </div>
+
+        <div class="file-upload-area">
+          <h3>Attach Files (Optional)</h3>
+          <div class="file-upload-buttons">
+            <button class="button outline" id="uploadPicBtn">📸 Add Picture</button>
+            <button class="button outline" id="uploadPdfBtn">📄 Add PDF</button>
+            <button class="button outline" id="uploadDocBtn">📋 Add Document</button>
+          </div>
+          <input type="file" id="picInput" accept="image/*" hidden />
+          <input type="file" id="pdfInput" accept=".pdf" hidden />
+          <input type="file" id="docInput" accept=".doc,.docx" hidden />
+          <div class="attached-files" id="attachedFiles" style="margin-top: 12px; display: none;">
+            <p><strong>Attached Files:</strong></p>
+            <div id="filesList"></div>
+          </div>
         </div>
 
         <div class="chat-container" id="chatContainer">

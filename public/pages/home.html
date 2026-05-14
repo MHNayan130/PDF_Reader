@@ -12,7 +12,7 @@
 <body>
   <div class="page-shell home-with-sidebar">
     <header class="topbar">
-      <div class="brand"></div>
+      <div class="brand">ANYSTUDY</div>
       <div class="header-spacer"></div>
       <button type="button" class="chat-btn" id="chatSidebarToggle" aria-label="Toggle chat sidebar" title="Chat Assistant">
         💬
@@ -98,12 +98,32 @@
 
       <aside class="chat-sidebar" id="chatSidebar">
         <div class="chat-sidebar-header">
-          <h3>Chat Assistant</h3>
+          <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+            <h3 style="margin: 0;">Chat</h3>
+            <a href="/ai/chat.html" class="button small" style="padding: 4px 8px; font-size: 0.8rem; margin: 0;">Full Screen</a>
+          </div>
           <button class="close-btn" id="closeChatSidebar" aria-label="Close chat sidebar">✕</button>
         </div>
-        <div class="chat-sidebar-content" id="chatContent">
-          <div class="chat-placeholder">
-            <p>Chat will appear here...</p>
+
+        <div class="chat-sidebar-content">
+          <div class="model-selector" style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <label for="sidebarModelSelect" style="font-size: 0.9rem;">Model:</label>
+            <select id="sidebarModelSelect" class="model-select" style="width: 100%; margin-top: 4px;">
+              <option value="deepseek-ai/DeepSeek-V3:novita">DeepSeek V3</option>
+              <option value="Qwen/Qwen2.5-72B-Instruct">Qwen 2.5 72B</option>
+            </select>
+          </div>
+          <div class="chat-messages" id="sidebarChatMessages" style="flex: 1; overflow-y: auto; padding: 12px;"></div>
+          <div class="chat-input-area" style="padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
+            <input
+              type="text"
+              id="sidebarChatInput"
+              placeholder="Type message..."
+              class="chat-input"
+              style="margin-bottom: 8px;"
+              autocomplete="off"
+            />
+            <button class="button primary" id="sidebarChatSendBtn" style="width: 100%; padding: 10px;">Send</button>
           </div>
         </div>
       </aside>
@@ -114,15 +134,42 @@
     <div class="wave wave-1"></div>
     <div class="wave wave-2"></div>
     <div class="wave wave-3"></div>
-    <div class="particle particle-1"></div>
-    <div class="particle particle-2"></div>
-    <div class="particle particle-3"></div>
-    <div class="particle particle-4"></div>
     <div class="particle particle-5"></div>
     <div class="particle particle-6"></div>
     <div class="particle particle-7"></div>
     <div class="particle particle-8"></div>
   </div>
+
+  <!-- File Upload Confirmation Modal -->
+  <div id="uploadModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Confirm Upload</h2>
+        <button class="modal-close-btn" id="modalCloseBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="filePreviewInfo" class="file-preview-info"></div>
+        <div class="modal-actions">
+          <button class="button outline" id="cancelUploadBtn">Cancel</button>
+          <button class="button primary" id="confirmUploadBtn">Upload</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-content { background: rgba(9,14,30,0.98); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-header h2 { margin: 0; font-size: 1.3rem; }
+    .modal-close-btn { background: none; border: none; color: #e9f0ff; cursor: pointer; font-size: 1.2rem; }
+    .modal-body { color: #e9f0ff; }
+    .file-preview-info { margin-bottom: 20px; padding: 16px; background: rgba(255,255,255,0.04); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); }
+    .file-preview-info p { margin: 8px 0; }
+    .file-content-preview { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .file-content-preview pre { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; line-height: 1.4; color: #d0d8e8; white-space: pre-wrap; word-wrap: break-word; max-height: 200px; overflow-y: auto; }
+    .modal-actions { display: flex; gap: 12px; }
+  </style>
 
   <script src="/js/app.js"></script>
 </body>

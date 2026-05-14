@@ -11,10 +11,14 @@
 </head>
 <body>
   <div class="page-shell">
-    <header class="topbar">
+    <header class="topbar persistent-header">
       <div class="brand">
-        <a href="/pages/home.html">AnyStudy</a>
+        <a href="/pages/home.html">ANYSTUDY</a>
       </div>
+      <div class="header-spacer"></div>
+      <button type="button" class="chat-btn" id="chatSidebarToggle" aria-label="Toggle chat sidebar" title="Chat Assistant">
+        💬
+      </button>
       <div class="profile-section">
         <button type="button" class="profile-btn" id="profileBtn" aria-label="Open profile menu">
           <img id="profileImage" src="" alt="Profile avatar" />
@@ -36,7 +40,19 @@
 
       <div class="translate-container">
         <div class="translate-panel">
-          <h3>Source Text</h3>
+          <h3>Source Document (Optional)</h3>
+          <div class="file-selection-area">
+            <div class="file-options">
+              <button class="button outline" id="loadExistingTranslateFileBtn">📂 Load Document</button>
+              <button class="button outline" id="uploadTranslateFileBtn">📤 Upload Document</button>
+            </div>
+            <input type="file" id="translateDocInput" accept=".pdf,.doc,.docx,.txt" hidden />
+            <div class="selected-file-info" id="selectedTranslateFileInfo" style="display: none; margin-top: 12px;">
+              <p><strong>Selected:</strong> <span id="selectedTranslateFileName"></span></p>
+            </div>
+          </div>
+
+          <h3 style="margin-top: 24px;">Source Text</h3>
           <div class="language-selector">
             <select id="fromLang" class="lang-select">
               <option value="English">English</option>

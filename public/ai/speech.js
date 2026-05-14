@@ -1,3 +1,5 @@
+let referenceDocText = '';
+
 async function bindSpeechPage() {
   const audioFileInput = document.getElementById('audioFileInput');
   const audioInfo = document.getElementById('audioInfo');
@@ -9,6 +11,12 @@ async function bindSpeechPage() {
   const audioDropzone = document.querySelector('.audio-dropzone');
   const micBtn = document.getElementById('micBtn');
   const micStatus = document.getElementById('micStatus');
+  const loadExistingSpeechFileBtn = document.getElementById('loadExistingSpeechFileBtn');
+  const uploadSpeechFileBtn = document.getElementById('uploadSpeechFileBtn');
+  const speechDocInput = document.getElementById('speechDocInput');
+  const comparisonSection = document.getElementById('comparisonSection');
+  const comparisonResult = document.getElementById('comparisonResult');
+  const matchPercentage = document.getElementById('matchPercentage');
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const isSpeechRecognitionSupported = !!SpeechRecognition;
@@ -17,6 +25,16 @@ async function bindSpeechPage() {
 
   loadProfileImage();
   bindPopupMenu();
+
+  // Document file loading handlers
+  if (loadExistingSpeechFileBtn) {
+    loadExistingSpeechFileBtn.addEventListener('click', showLoadFileDialog);
+  }
+
+  if (uploadSpeechFileBtn && speechDocInput) {
+    uploadSpeechFileBtn.addEventListener('click', () => speechDocInput.click());
+    speechDocInput.addEventListener('change', handleSpeechDocUpload);
+  }
 
   let selectedFile = null;
 
@@ -56,6 +74,64 @@ async function bindSpeechPage() {
     transcriptionResult.innerHTML = `<p>${escapeHtml(text)}</p>`;
     if (copyTranscriptionBtn) {
       copyTranscriptionBtn.style.display = text.trim() ? 'inline-block' : 'none';
+    }
+    // Compare with reference if available
+    if (referenceDocText) {
+      compareWithReference(text);
+    }
+  }
+
+  function compareWithReference(transcription) {
+    if (!referenceDocText) return;
+
+    comparisonSection.style.display = 'block';
+    const refWords = referenceDocText.toLowerCase().split(/\s+/);
+    const transWords = transcription.toLowerCase().split(/\s+/);
+    let matchCount = 0;
+    let comparisonHTML = '';
+
+    transWords.forEach(word => {
+      if (refWords.some(rw => rw.includes(word) || word.includes(rw))) {
+        comparisonHTML += `<span class="matched-word">${escapeHtml(word)}</span> `;
+        matchCount++;
+      } else {
+        comparisonHTML += `<span class="unmatched-word">${escapeHtml(word)}</span> `;
+      }
+    });
+
+    comparisonResult.innerHTML = comparisonHTML;
+    const percentage = Math.round((matchCount / transWords.length) * 100);
+    matchPercentage.textContent = `Match: ${percentage}% (${matchCount}/${transWords.length} words matched)`;
+  }
+
+  function handleSpeechDocUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      referenceDocText = event.target.result;
+      document.getElementById('referenceDocText').textContent = referenceDocText.substring(0, 300) + '...';
+      document.getElementById('referenceDocPreview').style.display = 'block';
+      updateSelectedFileInfo('speechDocInput', 'selectedSpeechFileInfo', 'selectedSpeechFileName');
+    };
+    reader.readAsText(file);
+  }
+
+  function showLoadFileDialog() {
+    alert('Load existing file feature - you can implement a file browser here.');
+  }
+
+  function updateSelectedFileInfo(inputId, containerID, spanId) {
+    const input = document.getElementById(inputId);
+    const container = document.getElementById(containerID);
+    const span = document.getElementById(spanId);
+
+    if (input && container && span && input.files.length > 0) {
+      span.textContent = input.files[0].name;
+      container.style.display = 'block';
+    } else if (container) {
+      container.style.display = 'none';
     }
   }
 

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File Viewer – AnyStudy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.24/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1"></script>
+  <style>
+    body { margin: 0; padding: 0; background: #090b19; }
+    .viewer-container { display: flex; flex-direction: column; height: 100vh; }
+    .viewer-topbar { background: rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .viewer-title { font-size: 1.1rem; font-weight: 600; color: #e9f0ff; margin: 0; }
+    .viewer-toolbar { display: flex; gap: 12px; }
+    .viewer-content { flex: 1; overflow: auto; display: flex; justify-content: center; align-items: flex-start; padding: 24px; background: #090b19; }
+    .edit-panel { position: fixed; right: 0; top: 0; bottom: 0; width: 400px; background: rgba(9,14,30,0.98); border-left: 1px solid rgba(255,255,255,0.1); display: none; flex-direction: column; z-index: 100; box-shadow: -4px 0 20px rgba(0,0,0,0.3); }
+    .edit-panel.visible { display: flex; }
+    .edit-panel-header { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; }
+    .edit-panel-header h3 { margin: 0; font-size: 1rem; color: #e9f0ff; }
+    .edit-panel-content { flex: 1; overflow-y: auto; padding: 16px; }
+    .edit-textarea { width: 100%; height: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px; color: #e9f0ff; font-family: 'Courier New', monospace; font-size: 0.9rem; resize: none; }
+    .edit-panel-footer { padding: 12px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 8px; }
+    .button { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; }
+    .button.primary { background: #6366f1; color: white; }
+    .button.primary:hover { background: #4f46e5; }
+    .button.outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #e9f0ff; }
+    .button.outline:hover { background: rgba(255,255,255,0.06); }
+    .button.small { padding: 8px 12px; font-size: 0.85rem; }
+    .loading { text-align: center; color: #e9f0ff; padding: 40px; font-size: 1.1rem; }
+    .error { color: #ff6b6b; padding: 40px; text-align: center; }
+    .pdf-canvas { max-width: 100%; height: auto; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+    .doc-content { background: white; color: #222; padding: 40px; max-width: 900px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.3); border-radius: 8px; line-height: 1.6; }
+    .text-content { background: rgba(255,255,255,0.95); color: #222; padding: 24px; max-width: 900px; width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); font-family: 'Courier New', monospace; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+    .extraction-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 2000; }
+    .extraction-modal.show { display: flex; }
+    .extraction-modal-content { background: rgba(9,14,30,0.98); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; max-width: 800px; width: 90%; max-height: 80vh; display: flex; flex-direction: column; }
+    .extraction-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .extraction-modal-header h2 { margin: 0; font-size: 1.3rem; color: #e9f0ff; }
+    .extraction-modal-close { background: none; border: none; color: #e9f0ff; cursor: pointer; font-size: 1.2rem; }
+    .extraction-modal-body { flex: 1; overflow-y: auto; margin-bottom: 16px; }
+    .extraction-text { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; color: #e9f0ff; font-family: 'Courier New', monospace; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; font-size: 0.9rem; max-height: 400px; overflow-y: auto; }
+    .extraction-modal-footer { display: flex; gap: 12px; justify-content: flex-end; }
+    .copy-feedback { position: fixed; top: 20px; right: 20px; background: #6366f1; color: white; padding: 12px 16px; border-radius: 8px; z-index: 3000; animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="viewer-topbar">
+      <h1 class="viewer-title" id="fileTitle">Loading...</h1>
+      <div class="viewer-toolbar">
+        <button class="button outline" id="extractBtn" title="Extract text for AI tools">📋 Extract Text</button>
+        <button class="button outline" id="editBtn" title="Edit file">✏️ Edit</button>
+        <button class="button outline" id="downloadBtn" title="Download file">⬇️ Download</button>
+        <button class="button outline" id="backBtn" title="Go back to home">← Home</button>
+      </div>
+    </div>
+    <div class="viewer-content" id="viewerContent">
+      <div id="viewerBody" class="loading">Loading file...</div>
+    </div>
+    <div class="edit-panel" id="editPanel">
+      <div class="edit-panel-header">
+        <h3 id="editPanelTitle">Edit</h3>
+        <button class="button small outline" id="closeEditBtn">✕</button>
+      </div>
+      <div class="edit-panel-content" id="editPanelContent">
+        <textarea class="edit-textarea" id="editTextarea" placeholder="Edit content here..."></textarea>
+      </div>
+      <div class="edit-panel-footer">
+        <button class="button small outline" id="cancelEditBtn">Cancel</button>
+        <button class="button small primary" id="saveEditBtn">Save</button>
+      </div>
+    </div>
+    <div class="extraction-modal" id="extractionModal">
+      <div class="extraction-modal-content">
+        <div class="extraction-modal-header">
+          <h2>Extracted Text</h2>
+          <button class="extraction-modal-close" id="extractionCloseBtn">✕</button>
+        </div>
+        <div class="extraction-modal-body">
+          <div class="extraction-text" id="extractedTextDisplay"></div>
+        </div>
+        <div class="extraction-modal-footer">
+          <button class="button small outline" id="extractionCopyBtn">📋 Copy to Clipboard</button>
+          <button class="button small primary" id="extractionUseBtn">✓ Use with AI Tools</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fileTitle = document.getElementById('fileTitle');
+    const viewerBody = document.getElementById('viewerBody');
+    const viewerContent = document.getElementById('viewerContent');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const backBtn = document.getElementById('backBtn');
+    const editBtn = document.getElementById('editBtn');
+    const editPanel = document.getElementById('editPanel');
+    const editPanelContent = document.getElementById('editPanelContent');
+    const editPanelTitle = document.getElementById('editPanelTitle');
+    const editTextarea = document.getElementById('editTextarea');
+    const saveEditBtn = document.getElementById('saveEditBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const closeEditBtn = document.getElementById('closeEditBtn');
+    const extractBtn = document.getElementById('extractBtn');
+    const extractionModal = document.getElementById('extractionModal');
+    const extractedTextDisplay = document.getElementById('extractedTextDisplay');
+    const extractionCloseBtn = document.getElementById('extractionCloseBtn');
+    const extractionCopyBtn = document.getElementById('extractionCopyBtn');
+    const extractionUseBtn = document.getElementById('extractionUseBtn');
+    let currentExtractedText = '';
+
+    // Get filename from URL query param
+    const urlParams = new URLSearchParams(window.location.search);
+    const filename = urlParams.get('file');
+    let currentFileExt = '';
+    let currentFileContent = '';
+    let pdfArrayBuffer = null;
+
+    if (!filename) {
+      viewerBody.innerHTML = '<div class="error">No file specified. <br><a href="/pages/home.html" style="color: #6366f1;">Go back to home</a></div>';
+    } else {
+      fileTitle.textContent = decodeURIComponent(filename);
+      currentFileExt = filename.toLowerCase().split('.').pop();
+      
+      downloadBtn.addEventListener('click', () => {
+        window.location.href = `/api/file/${filename}`;
+      });
+      backBtn.addEventListener('click', () => {
+        window.location.href = '/pages/home.html';
+      });
+
+      loadFile(filename);
+    }
+
+    async function loadFile(filename) {
+      try {
+        const ext = filename.toLowerCase().split('.').pop();
+        const fileUrl = `/api/file/${filename}`;
+
+        if (ext === 'pdf') {
+          await loadPDF(fileUrl);
+        } else if (['doc', 'docx'].includes(ext)) {
+          await loadWord(fileUrl);
+        } else if (['txt', 'md', 'log', 'json', 'csv'].includes(ext)) {
+          await loadText(fileUrl);
+        } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+          await loadImage(fileUrl);
+        } else {
+          viewerBody.innerHTML = `<div class="error">File type .${ext} not supported for preview. <a href="javascript:downloadBtn.click();" style="color: #6366f1;">Download file</a> instead.</div>`;
+        }
+      } catch (err) {
+        viewerBody.innerHTML = `<div class="error">Error loading file: ${err.message}</div>`;
+        console.error('File loading error:', err);
+      }
+    }
+
+    async function loadPDF(url) {
+      viewerBody.innerHTML = '<div class="loading">Rendering PDF...</div>';
+      try {
+        const response = await fetch(url);
+        pdfArrayBuffer = await response.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: pdfArrayBuffer }).promise;
+        
+        viewerBody.innerHTML = '<div id="pdfContainer"></div>';
+        const container = document.getElementById('pdfContainer');
+
+        for (let pageNum = 1; pageNum <= Math.min(pdf.numPages, 10); pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 1.5 });
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          canvas.className = 'pdf-canvas';
+          
+          const context = canvas.getContext('2d');
+          await page.render({ canvasContext: context, viewport }).promise;
+          container.appendChild(canvas);
+          
+          const spacer = document.createElement('div');
+          spacer.style.height = '20px';
+          container.appendChild(spacer);
+        }
+        
+        if (pdf.numPages > 10) {
+          const note = document.createElement('div');
+          note.style.color = '#e9f0ff';
+          note.style.textAlign = 'center';
+          note.style.padding = '20px';
+          note.textContent = `... Showing first 10 of ${pdf.numPages} pages. Download to see all.`;
+          container.appendChild(note);
+        }
+        
+        extractBtn.style.display = 'inline-block';
+      } catch (err) {
+        viewerBody.innerHTML = `<div class="error">Error rendering PDF: ${err.message}</div>`;
+      }
+    }
+
+    async function loadWord(url) {
+      viewerBody.innerHTML = '<div class="loading">Converting Word document...</div>';
+      try {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        const result = await mammoth.convertToHtml({ arrayBuffer });
+        
+        currentFileContent = result.value;
+        
+        const content = document.createElement('div');
+        content.className = 'doc-content';
+        content.innerHTML = result.value;
+        viewerBody.innerHTML = '';
+        viewerBody.appendChild(content);
+        
+        extractBtn.style.display = 'inline-block';
+      } catch (err) {
+        viewerBody.innerHTML = `<div class="error">Error converting Word document: ${err.message}</div>`;
+      }
+    }
+
+    async function loadText(url) {
+      viewerBody.innerHTML = '<div class="loading">Loading text file...</div>';
+      try {
+        const response = await fetch(url);
+        const text = await response.text();
+        
+        currentFileContent = text;
+        
+        const content = document.createElement('div');
+        content.className = 'text-content';
+        content.textContent = text;
+        viewerBody.innerHTML = '';
+        viewerBody.appendChild(content);
+        
+        extractBtn.style.display = 'inline-block';
+      } catch (err) {
+        viewerBody.innerHTML = `<div class="error">Error loading text file: ${err.message}</div>`;
+      }
+    }
+
+    async function loadImage(url) {
+      viewerBody.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = url;
+      img.style.maxWidth = '100%';
+      img.style.height = 'auto';
+      img.style.borderRadius = '8px';
+      img.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+      img.onerror = () => {
+        viewerBody.innerHTML = `<div class="error">Error loading image</div>`;
+      };
+      viewerBody.appendChild(img);
+      extractBtn.style.display = 'none';
+    }
+
+    // Extract Text functionality
+    async function extractTextFromFile() {
+      try {
+        if (currentFileExt === 'pdf') {
+          currentExtractedText = await extractPDFText();
+        } else if (['doc', 'docx'].includes(currentFileExt)) {
+          currentExtractedText = await extractWordText();
+        } else if (['txt', 'md', 'log', 'json', 'csv'].includes(currentFileExt)) {
+          currentExtractedText = currentFileContent;
+        } else {
+          alert('Extraction not supported for this file type');
+          return;
+        }
+
+        if (currentExtractedText) {
+          extractedTextDisplay.textContent = currentExtractedText;
+          extractionModal.classList.add('show');
+        }
+      } catch (err) {
+        alert('Error extracting text: ' + err.message);
+      }
+    }
+
+    async function extractPDFText() {
+      if (!pdfArrayBuffer) return '';
+      
+      let allText = '';
+      const pdf = await pdfjsLib.getDocument({ data: pdfArrayBuffer }).promise;
+      
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => item.str).join(' ');
+        allText += pageText + '\n';
+      }
+      
+      return allText;
+    }
+
+    async function extractWordText() {
+      const fileUrl = `/api/file/${filename}`;
+      const response = await fetch(fileUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      return result.value;
+    }
+
+    // Modal controls
+    extractBtn.addEventListener('click', extractTextFromFile);
+
+    extractionCloseBtn.addEventListener('click', () => {
+      extractionModal.classList.remove('show');
+    });
+
+    extractionCopyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(currentExtractedText).then(() => {
+        showCopyFeedback('Copied to clipboard!');
+      }).catch(() => {
+        alert('Failed to copy to clipboard');
+      });
+    });
+
+    extractionUseBtn.addEventListener('click', () => {
+      localStorage.setItem('extractedTextForAI', currentExtractedText);
+      localStorage.setItem('extractedTextFilename', filename);
+      extractionModal.classList.remove('show');
+      alert('Text saved! You can now use it in Read & Analyze or Summary tools.');
+      window.location.href = '/ai/read.html';
+    });
+
+    function showCopyFeedback(message) {
+      const feedback = document.createElement('div');
+      feedback.className = 'copy-feedback';
+      feedback.textContent = message;
+      document.body.appendChild(feedback);
+      setTimeout(() => feedback.remove(), 2000);
+    }
+
+    // Edit panel functionality
+    editBtn.addEventListener('click', () => {
+      if (currentFileExt === 'pdf') {
+        alert('PDF text editing is not yet supported. You can add annotations or save extracted text.');
+        return;
+      }
+
+      editPanelTitle.textContent = 'Edit Content';
+      editPanelContent.innerHTML = `<textarea class="edit-textarea" id="editTextarea" placeholder="Edit content here...">${currentFileContent}</textarea>`;
+      document.getElementById('editTextarea').focus();
+      editPanel.classList.add('visible');
+      viewerContent.classList.add('with-edit');
+    });
+
+    closeEditBtn.addEventListener('click', () => {
+      editPanel.classList.remove('visible');
+      viewerContent.classList.remove('with-edit');
+    });
+
+    cancelEditBtn.addEventListener('click', () => {
+      editPanel.classList.remove('visible');
+      viewerContent.classList.remove('with-edit');
+    });
+
+    saveEditBtn.addEventListener('click', async () => {
+      saveEditBtn.disabled = true;
+      saveEditBtn.textContent = 'Saving...';
+      
+      try {
+        const textarea = document.getElementById('editTextarea');
+        const contentToSave = textarea.value;
+
+        const response = await fetch('/api/save-file', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: filename,
+            content: contentToSave,
+            type: currentFileExt
+          })
+        });
+
+        if (!response.ok) throw new Error('Save failed');
+        
+        currentFileContent = contentToSave;
+        alert('File saved successfully!');
+        editPanel.classList.remove('visible');
+        viewerContent.classList.remove('with-edit');
+        
+        await loadFile(filename);
+      } catch (err) {
+        alert('Error saving file: ' + err.message);
+      } finally {
+        saveEditBtn.disabled = false;
+        saveEditBtn.textContent = 'Save';
+      }
+    });
+  </script>
+</body>
+</html>
